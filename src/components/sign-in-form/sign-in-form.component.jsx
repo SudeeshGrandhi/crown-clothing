@@ -10,6 +10,7 @@ import Button from "../button/button.component";
 import "./sign-in-form.styles.scss";
 
 import FormInput from "../form-input/form-input.component";
+
 const SignInForm = () => {
   const defaultFormFields = {
     email: "",
@@ -29,6 +30,7 @@ const SignInForm = () => {
 
     try {
       await signInAuthUserFromEmailAndPassword(email, password);
+
       setFormFields(defaultFormFields);
     } catch (err) {
       switch (err.code) {
@@ -45,9 +47,7 @@ const SignInForm = () => {
   };
 
   const signInGoogleUser = async () => {
-    const response = await signInWithGooglePopup();
-    const { user } = response;
-    userCollectionFromAuthentication(user);
+    await signInWithGooglePopup();
   };
 
   return (

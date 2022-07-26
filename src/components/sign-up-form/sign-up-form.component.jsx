@@ -8,6 +8,7 @@ import "./sign-up-form.component";
 import Button from "../button/button.component";
 
 import FormInput from "../form-input/form-input.component";
+
 const SignUpForm = () => {
   const defaultFormFields = {
     displayName: "",
@@ -95,6 +96,7 @@ const SignUpForm = () => {
           value={confirmPassword}
           onChange={onHandleChange}
         />
+
         <Button type="submit">SIGN UP</Button>
       </form>
     </div>
