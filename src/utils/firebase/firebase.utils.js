@@ -9,7 +9,16 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCj4s_7OjKjjgdjmgEzi171NcoWxROeTCU",
@@ -32,6 +41,53 @@ export const signInWithGooglePopup = () => {
 
 const database = getFirestore();
 
+export const addCateToFirestore = async (collectionKey, object) => {
+  const categoriesRef = collection(database, collectionKey);
+  const batch = writeBatch(database);
+
+  object.forEach((object) => {
+    const categoryDocRef = doc(categoriesRef, object.id);
+
+    batch.set(categoryDocRef, object);
+  });
+  batch.commit();
+};
+
+//We are storing out SHOP_DATA to firestore Database
+//Transaction is succesful(ex transfer of money) this can be achieved through batches
+
+export const addCategoriesAndDocumentsToFireStore = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = collection(database, collectionKey);
+  const batch = writeBatch(database);
+
+  objectsToAdd.forEach((object) => {
+    const collectionDocRef = doc(
+      collectionRef,
+      object.title.toLocaleLowerCase()
+    );
+    batch.set(collectionDocRef, object);
+  });
+  batch.commit();
+};
+
+//We are getting out SHOP_DATA from firestore Database
+
+export const getCategoriesAndDocumentFromFireStore = async () => {
+  const collectionRef = collection(database, "categories");
+  const q = query(collectionRef);
+
+  const collectionSnapshot = await getDocs(q);
+
+  const categoryMap = collectionSnapshot.docs.reduce((acc, element) => {
+    const { title, items } = element.data();
+    acc[title.toLocaleLowerCase()] = items;
+    return acc;
+  }, {});
+  return categoryMap;
+};
 export const userCollectionFromAuthentication = async (
   user,
   additionalInformation = {}
